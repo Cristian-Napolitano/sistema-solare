@@ -72,3 +72,60 @@ canvas{
     height: 100%;
     z-index: 3;
 }
+
+#tooltip{
+    position: absolute;
+    z-index: 200;
+    background: rgba(15, 15, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 16px 20px;
+    min-width: 240px;
+    max-width: 280px;
+    color: #fff;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#tooltip h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+#tooltip .info-riga{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+#tooltip .info-etichetta {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+#tooltip .info-valore {
+    color: #fff;
+    font-weight: 500;
+}
+
+#tooltip .curiosita {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.tooltip-nascosto {
+    opacity: 0;
+}
+
+.tooltip-visibile{
+    opacity: 1;
+}
