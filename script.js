@@ -62,7 +62,7 @@ const datiPianeti = [
         curiosita: 'Famoso per i suoi spettacolari anelli di ghiaccio e roccia.'
     },
     {
-        nome: 'urano', raggioX: 940, raggioY: 240, velocita: 0.0024, dimensione: 70,
+        nome: 'urano', raggioX: 940, raggioY: 240, velocita: 0.010, dimensione: 70,
         nomeEsteso: 'Urano',
         distanza: '2,9 miliardi di km',
         diametro: '50.724 km',
@@ -71,7 +71,7 @@ const datiPianeti = [
         curiosita: 'Inclinato di 98°, ruota letteralmente "sdraiato" sul suo fianco.'
     },
     {
-        nome: 'nettuno', raggioX: 1080, raggioY: 280, velocita: 0.0018, dimensione: 65,
+        nome: 'nettuno', raggioX: 1080, raggioY: 280, velocita: 0.012, dimensione: 65,
         nomeEsteso: 'Nettuno',
         distanza: '4,5 miliardi di km',
         diametro: '49.244 km',
@@ -186,7 +186,7 @@ function posizionaTooltip(divPianeta){
 
     const offsetX = (ZOOM_FOCUS / 2) + 30;
     const tooltipWidth = 280;
-    const toooltipHeight = 200;
+    const tooltipHeight = 200;
     const margine = 16;
 
     let left = pianetaX + offsetX;
@@ -200,17 +200,17 @@ function posizionaTooltip(divPianeta){
     if (left < margine) {
         left = pianetaX - tooltipWidth / 2;
         
-        top = pianetaY + offset;
+        top = pianetaY + offsetX;
         transform = 'translateY(0)';
 
         if (top + tooltipHeight + margine > window.innerHeight) {
-            top = pianetaY - offset - toooltipHeight;
+            top = pianetaY - offsetX - tooltipHeight;
         }
     }
 
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
-    tooltip.style.transform = 'transform';
+    tooltip.style.transform = transform;
 }
 
 
