@@ -30,12 +30,13 @@ header h1{
 #sistema-solare{
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 60px);
     background: black;
+    overflow: hidden;
 }
 .sole{
     position: absolute;
-    top: 38%;
+    top: 42%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
@@ -128,4 +129,39 @@ canvas{
 
 .tooltip-visibile{
     opacity: 1;
+}
+
+.freccia-scopri {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    pointer-events: none;
+    animation: respira 2.5s ease-in-out infinite;
+}
+
+.freccia-icona{
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+@keyframes respira {
+    0%, 100% {
+        opacity: 0.4;
+        transform: translate(-50%) translate(0);
+    }
+    50%{
+        opacity: 0.9;
+        transform: translateX(-50%) translateY(6px);
+    }
+
 }
