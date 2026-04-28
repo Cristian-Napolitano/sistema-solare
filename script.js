@@ -185,10 +185,32 @@ function posizionaTooltip(divPianeta){
     const pianetaY = parseFloat(divPianeta.style.top);
 
     const offsetX = (ZOOM_FOCUS / 2) + 30;
+    const tooltipWidth = 280;
+    const toooltipHeight = 200;
+    const margine = 16;
 
-    tooltip.style.left = `${pianetaX + offsetX}px`;
-    tooltip.style.top = `${pianetaY}px`;
-    tooltip.style.transform = 'translateY(-50%)';
+    let left = pianetaX + offsetX;
+    let top = pianetaY;
+    let transform = 'translateY(-50%)';
+
+    if(left + tooltipWidth + margine > window.innerWidth){
+        left = pianetaX - offsetX - tooltipWidth; 
+    }
+
+    if (left < margine) {
+        left = pianetaX - tooltipWidth / 2;
+        
+        top = pianetaY + offset;
+        transform = 'translateY(0)';
+
+        if (top + tooltipHeight + margine > window.innerHeight) {
+            top = pianetaY - offset - toooltipHeight;
+        }
+    }
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.transform = 'transform';
 }
 
 
