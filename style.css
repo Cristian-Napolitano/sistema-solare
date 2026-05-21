@@ -2,6 +2,15 @@
     box-sizing: border-box;
 }
 
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+    display: none;
+}
+
 body{
     margin: 0;
     padding: 0;
@@ -164,4 +173,177 @@ canvas{
         transform: translateX(-50%) translateY(6px);
     }
 
+}
+
+#enciclopedia {
+    width: 100vw;
+    height: 100vh;
+    background: #05050a;
+    padding: 20px 0 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.selettore-pianeti {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 0 20px;
+}
+
+.btn-pianeta{
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: color 0.25s ease;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    position: relative
+}
+
+.btn-pianeta:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-pianeta.attivo{
+    color: #fff;
+}
+
+.indicatore-attivo {
+    position: absolute;
+    bottom: 0;
+    width: 24px;
+    height: 1px;
+    background: #fff;
+    transition: left 0.3s ease, width 0.3s ease;
+    pointer-events: none;
+}
+
+.selettore-pianeti {
+    position: relative;
+}
+
+.contenuto-scheda{
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+}
+
+.area-modello{
+    background: #0a0e2a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+}
+
+
+
+.freccia-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.25s ease;
+    z-index: 10;
+    padding: 16px;
+}
+
+.freccia-nav:hover {
+    color: #fff;
+}
+
+.freccia-sx{ left: 16px;}
+.freccia-dx{ right: 16px;}
+
+
+.placeholder-video {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.5rem;
+}
+
+.area-info{
+    background: #1a0a1f;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 40px 60px 40px 60px;
+}
+
+
+
+.area-info h2 {
+    font-size: 2.2rem;
+    margin: 0 0 24px 0;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.area-info p {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+    font-size: 1.2rem;
+    max-width: 480px;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.note-lune {
+    font-family: 'space mono', monospace;
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    cursor: default;
+    max-width: calc(100% - 48px);
+}
+
+.asterisco {
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+    margin: -10px;
+}
+
+.note-lune:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.testo-lune {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition: max-width 0.6s ease, opacity 0.4s ease;
+}
+
+.note-lune:hover .testo-lune {
+    max-width: 800px;
+    opacity: 1;
 }
