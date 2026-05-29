@@ -15,15 +15,19 @@ body{
     margin: 0;
     padding: 0;
     background: #0a0a14;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('immagini/galassia_1.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
     color: #fff;
     font-family: system-ui, -apple-system, sans-serif;
 
 }
 
 header{
-background: #0a0a14;
+background: transparent;
 padding: 16px;
-border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 height: 60px;
 display: flex;
 align-items: center;
@@ -40,7 +44,7 @@ header h1{
     position: relative;
     width: 100vw;
     height: calc(100vh - 60px);
-    background: black;
+    background: transparent;
     overflow: hidden;
 }
 .sole{
@@ -347,3 +351,4 @@ canvas{
     max-width: 800px;
     opacity: 1;
 }
+
