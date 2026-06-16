@@ -6,6 +6,8 @@ window.addEventListener('load', () =>{
     const tooltip = document.querySelector('#tooltip');
     const indicatore = document.querySelector('.indicatore-attivo');
     const testoLune = document.querySelector('#testo-lune');
+    const contenitoreVideo = document.querySelector('.placeholder-video');
+    const videoPianeta = document.querySelector('#video-pianeta');
 
 
 const datiPianeti = [
@@ -19,6 +21,7 @@ const datiPianeti = [
         luneNotevoli: 'Satelliti — nessuno',
         curiosita: 'Il pianeta più piccolo e veloce del sistema solare.',
         descrizione : `Mercurio è il pianeta più vicino al Sole e il più piccolo del sistema solare, più piccolo persino di lune come Ganimede e Titano. Compie un'orbita completa in appena 88 giorni, mentre per ruotare su sé stesso ne impiega 59: una giornata mercuriana dura quasi quanto due dei suoi anni. È anche il pianeta più veloce, e per la sua rapidità i romani lo intitolarono al messaggero degli dèi. Senza atmosfera, è un mondo di contrasti estremi: nelle zone illuminate si raggiungono i 430°C, in quelle in ombra si scende a -180°C. Sotto la superficie nasconde un enorme nucleo di ferro che lo rende quasi denso quanto la Terra, nonostante le dimensioni ridotte. Eppure, nei crateri polari in ombra perpetua, le sonde hanno trovato ghiaccio d'acqua: persino nel forno del sistema solare c'è un angolo dove la luce non è mai arrivata.`,
+        video: 'video/mercurio.mp4',
     },
     {
         nome: 'venere', raggioX: 270, raggioY: 60, velocita: 0.009, dimensione: 50,
@@ -30,6 +33,7 @@ const datiPianeti = [
         luneNotevoli: 'Satelliti — nessuno',
         curiosita: 'Il pianeta più caldo, ruota al contrario.',
         descrizione: `Venere è il secondo pianeta dal Sole, e per dimensioni e composizione è quasi un gemello della Terra. Eppure dietro questa somiglianza si nasconde il mondo più inospitale del sistema solare: con i suoi 470°C di superficie è il pianeta più caldo in assoluto. La colpa è di un'atmosfera densissima di anidride carbonica, che intrappola il calore in un effetto serra senza ritorno, e di nuvole di acido solforico che lo avvolgono in una foschia color ocra. A rendere tutto più straniante, Venere ruota al contrario rispetto a quasi tutti gli altri pianeti, e così lentamente che un suo giorno dura più di un suo anno. Eppure sono proprio quelle nuvole soffocanti a rimandare indietro gran parte della luce solare, rendendo Venere il terzo oggetto più luminoso del nostro cielo dopo il Sole e la Luna.`,
+        video: 'video/venere.mp4',
     },
     {
         nome: 'terra', raggioX: 380, raggioY: 90, velocita: 0.007, dimensione: 55,
@@ -51,7 +55,8 @@ const datiPianeti = [
         lune: '2',
         luneNotevoli: 'Satelliti — Phobos e Deimos (piccole e irregolari)',
         curiosita: 'Il "pianeta rosso", ospita il vulcano più alto del sistema solare.',
-        descrizione: `Marte è il quarto pianeta dal Sole, grande circa la metà della Terra. È chiamato "pianeta rosso" perché la sua superficie è ricoperta di ossido di ferro, cioè ruggine. Un suo giorno dura poco più di 24 ore, ma l'anno è lungo quasi il doppio del nostro: 687 giorni. Pur essendo piccolo, ospita i rilievi più estremi del sistema solare: l'Olympus Mons, un vulcano alto circa 22 chilometri — due volte e mezzo l'Everest — e le Valles Marineris, un sistema di canyon lungo oltre quattromila chilometri. L'atmosfera è molto sottile e le temperature medie restano sotto i -60°C, con tempeste di polvere che possono coprire l'intero pianeta per settimane. Lo accompagnano due piccole lune, Phobos e Deimos, probabilmente asteroidi catturati. Eppure la sua superficie conserva i segni di antichi fiumi e bacini prosciugati: la prova che, miliardi di anni fa, su Marte l'acqua scorreva allo stato liquido.`
+        descrizione: `Marte è il quarto pianeta dal Sole, grande circa la metà della Terra. È chiamato "pianeta rosso" perché la sua superficie è ricoperta di ossido di ferro, cioè ruggine. Un suo giorno dura poco più di 24 ore, ma l'anno è lungo quasi il doppio del nostro: 687 giorni. Pur essendo piccolo, ospita i rilievi più estremi del sistema solare: l'Olympus Mons, un vulcano alto circa 22 chilometri — due volte e mezzo l'Everest — e le Valles Marineris, un sistema di canyon lungo oltre quattromila chilometri. L'atmosfera è molto sottile e le temperature medie restano sotto i -60°C, con tempeste di polvere che possono coprire l'intero pianeta per settimane. Lo accompagnano due piccole lune, Phobos e Deimos, probabilmente asteroidi catturati. Eppure la sua superficie conserva i segni di antichi fiumi e bacini prosciugati: la prova che, miliardi di anni fa, su Marte l'acqua scorreva allo stato liquido.`,
+        video: 'video/marte.mp4' ,
     },
     {
         nome: 'giove', raggioX: 640, raggioY: 160, velocita: 0.004, dimensione: 110,
@@ -285,6 +290,17 @@ function mostraPianeta(indice) {
     placeholder.textContent = dato.nomeEsteso;
     titolo.textContent = dato.nomeEsteso;
     descrizione.textContent = dato.descrizione ||dato.curiosita;
+
+    if(dato.video) {
+        contenitoreVideo.classList.add('ha-video');
+        if (!videoPianeta.src.endsWith(dato.video)) videoPianeta.src = dato.video;
+        videoPianeta.play(() => {});
+    } else {
+        contenitoreVideo.classList.remove('ha-video');
+        videoPianeta.pause();
+        videoPianeta.removeAttribute('src');
+        videoPianeta.load();
+    }
 
     const tuttiBtn = document.querySelectorAll('.btn-pianeta');
     tuttiBtn.forEach((btn, i) => {

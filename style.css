@@ -245,7 +245,7 @@ canvas{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 24px;
     position: relative;
 }
 
@@ -275,7 +275,7 @@ canvas{
 
 .placeholder-video {
     width: 100%;
-    max-width: 500px;
+    max-width: 460px;
     aspect-ratio: 1;
     background: rgba(255, 255, 255, 0.5);
     border: 1px dashed rgba(255, 255, 255, 0.2);
@@ -285,7 +285,28 @@ canvas{
     justify-content: center;
     color: rgba(255, 255, 255, 0.5);
     font-size: 1.5rem;
+    position: absolute;
+    
 }
+
+.placeholder-video.ha-video {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+.placeholder-video.ha-video .video-pianeta{
+    display: block;
+    mix-blend-mode: screen;
+}
+
+#video-pianeta {
+    width: 800px;
+    height: auto;
+}
+
+.placeholder-video.ha-video #nome-placeholder { display: none; }
+.placeholder-video.ha-video .video-pianeta { display: block; }
 
 .area-info{
     background: #1a0a1f;
@@ -351,4 +372,3 @@ canvas{
     max-width: 800px;
     opacity: 1;
 }
-
