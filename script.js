@@ -33,7 +33,7 @@ const datiPianeti = [
         luneNotevoli: 'Satelliti — nessuno',
         curiosita: 'Il pianeta più caldo, ruota al contrario.',
         descrizione: `Venere è il secondo pianeta dal Sole, e per dimensioni e composizione è quasi un gemello della Terra. Eppure dietro questa somiglianza si nasconde il mondo più inospitale del sistema solare: con i suoi 470°C di superficie è il pianeta più caldo in assoluto. La colpa è di un'atmosfera densissima di anidride carbonica, che intrappola il calore in un effetto serra senza ritorno, e di nuvole di acido solforico che lo avvolgono in una foschia color ocra. A rendere tutto più straniante, Venere ruota al contrario rispetto a quasi tutti gli altri pianeti, e così lentamente che un suo giorno dura più di un suo anno. Eppure sono proprio quelle nuvole soffocanti a rimandare indietro gran parte della luce solare, rendendo Venere il terzo oggetto più luminoso del nostro cielo dopo il Sole e la Luna.`,
-        video: 'video/venere.mp4',
+        video: 'video/venere.mp4' ,
     },
     {
         nome: 'terra', raggioX: 380, raggioY: 90, velocita: 0.007, dimensione: 55,
@@ -44,7 +44,8 @@ const datiPianeti = [
         lune: '1',
         luneNotevoli: 'Satelliti — la Luna',
         curiosita: 'L\'unico pianeta conosciuto a ospitare la vita.',
-        descrizione: `La Terra è il terzo pianeta dal Sole e, per quanto ne sappiamo, l'unico a ospitare forme di vita. La sua distanza dal Sole permette all'acqua di restare liquida sulla superficie, che ne copre oltre due terzi: un caso unico nel sistema solare. Il nucleo genera un campo magnetico che devia il vento solare e limita l'erosione dell'atmosfera. È inoltre l'unico pianeta noto con una crosta spezzata in placche in lento movimento: scorrono l'una contro l'altra a una velocità impercettibile, eppure sufficiente a non lasciare mai alla superficie una forma definitiva. Ha un solo satellite naturale, la Luna, grande rispetto al pianeta e legata alla stabilità del suo asse. Una particolarità riguarda l'atmosfera: l'ossigeno che ne fa parte non era presente in origine, ma è il prodotto dell'attività degli organismi viventi nel corso di miliardi di anni.`
+        descrizione: `La Terra è il terzo pianeta dal Sole e, per quanto ne sappiamo, l'unico a ospitare forme di vita. La sua distanza dal Sole permette all'acqua di restare liquida sulla superficie, che ne copre oltre due terzi: un caso unico nel sistema solare. Il nucleo genera un campo magnetico che devia il vento solare e limita l'erosione dell'atmosfera. È inoltre l'unico pianeta noto con una crosta spezzata in placche in lento movimento: scorrono l'una contro l'altra a una velocità impercettibile, eppure sufficiente a non lasciare mai alla superficie una forma definitiva. Ha un solo satellite naturale, la Luna, grande rispetto al pianeta e legata alla stabilità del suo asse. Una particolarità riguarda l'atmosfera: l'ossigeno che ne fa parte non era presente in origine, ma è il prodotto dell'attività degli organismi viventi nel corso di miliardi di anni.`, 
+        video: 'video/terra.mp4' ,
     },
     {
         nome: 'marte', raggioX: 490, raggioY: 120, velocita: 0.006, dimensione: 38,
@@ -67,7 +68,8 @@ const datiPianeti = [
         lune: '95',
         luneNotevoli: 'Satelliti — Io (vulcanica), Europa (oceano sotterraneo), Ganimede (la più grande), Callisto (craterizzata)',
         curiosita: 'Il gigante del sistema solare, con la famosa Grande Macchia Rossa.',
-        descrizione: `Giove è il quinto pianeta dal Sole e il più grande del sistema solare: ha una massa superiore a quella di tutti gli altri pianeti messi insieme, e al suo interno ci starebbero oltre milletrecento Terre. Non ha una superficie solida — è una sfera di idrogeno ed elio avvolta da bande di nubi in perenne movimento. Nonostante le dimensioni enormi, ruota più in fretta di ogni altro pianeta: un suo giorno dura meno di dieci ore. La sua caratteristica più nota è la Grande Macchia Rossa, una tempesta più larga della Terra che gli astronomi osservano da almeno tre secoli. Eppure la sua scoperta più importante non riguarda il pianeta in sé: nel 1610 Galileo Galilei vide quattro punti di luce girargli attorno — i primi mondi mai osservati orbitare qualcosa che non fosse la Terra, una prova che contribuì a smontare l'idea che tutto ruotasse intorno a noi.`
+        descrizione: `Giove è il quinto pianeta dal Sole e il più grande del sistema solare: ha una massa superiore a quella di tutti gli altri pianeti messi insieme, e al suo interno ci starebbero oltre milletrecento Terre. Non ha una superficie solida — è una sfera di idrogeno ed elio avvolta da bande di nubi in perenne movimento. Nonostante le dimensioni enormi, ruota più in fretta di ogni altro pianeta: un suo giorno dura meno di dieci ore. La sua caratteristica più nota è la Grande Macchia Rossa, una tempesta più larga della Terra che gli astronomi osservano da almeno tre secoli. Eppure la sua scoperta più importante non riguarda il pianeta in sé: nel 1610 Galileo Galilei vide quattro punti di luce girargli attorno — i primi mondi mai osservati orbitare qualcosa che non fosse la Terra, una prova che contribuì a smontare l'idea che tutto ruotasse intorno a noi.`,
+        video: 'video/giove.mp4' ,
     },
     {
         nome: 'saturno', raggioX: 800, raggioY: 200, velocita: 0.003, dimensione: 150,
@@ -78,7 +80,8 @@ const datiPianeti = [
         lune: '146',
         luneNotevoli: 'Satelliti — Titano (atmosfera densa), Encelado (geyser di ghiaccio)',
         curiosita: 'Famoso per i suoi spettacolari anelli di ghiaccio e roccia.',
-        descrizione: `Saturno è il sesto pianeta dal Sole e il secondo per dimensioni del sistema solare. È un gigante gassoso di idrogeno ed elio, ed è anche il meno denso in assoluto. La sua caratteristica più riconoscibile sono gli anelli, una distesa larga centinaia di migliaia di chilometri ma spessa, in media, solo poche decine di metri, composta da ghiaccio e roccia. Più sorprendente ancora è ciò che si trova su uno dei suoi poli: una corrente atmosferica che, vista dall'alto, traccia un esagono quasi perfetto, con sei lati di circa 13.000 chilometri ciascuno, in rotazione costante da almeno quarant'anni — un'anomalia geometrica così rigida e duratura che ancora oggi non ha una spiegazione definitiva. Eppure quegli stessi anelli, su scala astronomica, sono recenti e probabilmente destinati a scomparire: la gravità di Saturno li sta lentamente attirando verso di sé, e si stima che fra qualche centinaio di milioni di anni non saranno più visibili.`
+        descrizione: `Saturno è il sesto pianeta dal Sole e il secondo per dimensioni del sistema solare. È un gigante gassoso di idrogeno ed elio, ed è anche il meno denso in assoluto. La sua caratteristica più riconoscibile sono gli anelli, una distesa larga centinaia di migliaia di chilometri ma spessa, in media, solo poche decine di metri, composta da ghiaccio e roccia. Più sorprendente ancora è ciò che si trova su uno dei suoi poli: una corrente atmosferica che, vista dall'alto, traccia un esagono quasi perfetto, con sei lati di circa 13.000 chilometri ciascuno, in rotazione costante da almeno quarant'anni — un'anomalia geometrica così rigida e duratura che ancora oggi non ha una spiegazione definitiva. Eppure quegli stessi anelli, su scala astronomica, sono recenti e probabilmente destinati a scomparire: la gravità di Saturno li sta lentamente attirando verso di sé, e si stima che fra qualche centinaio di milioni di anni non saranno più visibili.`,
+        video: 'video/saturno.mp4' ,
     },
     {
         nome: 'urano', raggioX: 940, raggioY: 240, velocita: 0.010, dimensione: 70,
