@@ -84,15 +84,16 @@ const datiPianeti = [
         video: 'video/saturno.mp4' ,
     },
     {
-        nome: 'urano', raggioX: 940, raggioY: 240, velocita: 0.010, dimensione: 70,
+        nome: 'urano', raggioX: 940, raggioY: 240, velocita: 0.010, dimensione: 58,
         nomeEsteso: 'Urano',
         distanza: '2,9 miliardi di km',
         diametro: '50.724 km',
         anno: '84 anni',
         lune: '28',
-        luneNotevoli: 'Satelliti — Miranda (canyon enormi), Titania (la più estesa)',
+        luneNotevoli: 'Satelliti — Miranda (canyon enormi), Titania (la più estesa), Oberon (craterizzata, la più esterna)',
         curiosita: 'Inclinato di 98°, ruota letteralmente "sdraiato" sul suo fianco.',
-        descrizione: `Urano è il settimo pianeta dal Sole, il primo dei due giganti di ghiaccio. È composto soprattutto da acqua, metano e ammoniaca, allo stato di fluidi densi sotto enormi pressioni. È proprio il metano dell'atmosfera ad assorbirne la luce rossa e a dargli l'inconfondibile colore azzurro-verde. La sua caratteristica più strana, però, è l'inclinazione dell'asse: 98 gradi, quasi adagiato sul piano dell'orbita, probabilmente in seguito a un'antica collisione con un corpo grande quanto la Terra. Questa posizione produce stagioni estreme: ai poli, estate e inverno durano 42 anni ciascuno. A tutto questo si aggiunge un dettaglio storico: Urano è il primo pianeta scoperto col telescopio, individuato da William Herschel nel 1781. Prima di allora, nessuno sospettava che oltre Saturno potesse esistere altro.`
+        descrizione: `Urano è il settimo pianeta dal Sole, il primo dei due giganti di ghiaccio. È composto soprattutto da acqua, metano e ammoniaca, allo stato di fluidi densi sotto enormi pressioni. È proprio il metano dell'atmosfera ad assorbirne la luce rossa e a dargli l'inconfondibile colore azzurro-verde. La sua caratteristica più strana, però, è l'inclinazione dell'asse: 98 gradi, quasi adagiato sul piano dell'orbita, probabilmente in seguito a un'antica collisione con un corpo grande quanto la Terra. Questa posizione produce stagioni estreme: ai poli, estate e inverno durano 42 anni ciascuno. A tutto questo si aggiunge un dettaglio storico: Urano è il primo pianeta scoperto col telescopio, individuato da William Herschel nel 1781. Prima di allora, nessuno sospettava che oltre Saturno potesse esistere altro.`, 
+        video: 'video/urano.mp4' ,
     },
     {
         nome: 'nettuno', raggioX: 1080, raggioY: 280, velocita: 0.012, dimensione: 65,
@@ -103,7 +104,8 @@ const datiPianeti = [
         lune: '16',
         luneNotevoli: 'Satelliti — Tritone (orbita retrograda)',
         curiosita: 'Ha i venti più veloci del sistema solare, fino a 2.100 km/h.',
-        descrizione: `Nettuno è l'ottavo e ultimo pianeta dal Sole, e a questa distanza riceve meno dell'uno per cento della luce che raggiunge la Terra. Si distingue per un colore blu profondo e marcato, dovuto al metano nella sua atmosfera. Compie un'orbita completa in 165 anni terrestri, e da quando lo conosciamo ne ha portata a termine appena una. La sua scoperta, nel 1846, è una delle più eleganti della storia dell'astronomia: non fu trovato osservando il cielo, ma calcolato sulla carta a partire dalle anomalie nell'orbita di Urano. Le coordinate previste matematicamente si rivelarono esatte al primo tentativo, e Nettuno fu individuato col telescopio nella zona indicata nel giro di poche ore.`
+        descrizione: `Nettuno è l'ottavo e ultimo pianeta dal Sole, e a questa distanza riceve meno dell'uno per cento della luce che raggiunge la Terra. Si distingue per un blu profondo e intenso, dovuto al metano della sua atmosfera, percorsa da enormi tempeste come la Grande Macchia Scura, un vortice grande quanto la Terra che appare e svanisce nel giro di pochi anni. Eppure, pur essendo il pianeta più lontano e più freddo, ospita i venti più veloci del sistema solare: raffiche supersoniche fino a 2.000 km/h, la cui energia resta in gran parte un mistero. La sua luna maggiore, Tritone, orbita in senso retrogrado, al contrario della rotazione del pianeta: probabilmente un corpo ghiacciato catturato. Fu anche il primo pianeta scoperto con il calcolo: nel 1846 la matematica ne predisse la posizione, e il telescopio lo trovò proprio lì.`, 
+        video: 'video/nettuno.mp4' ,
     }
 ]
 
@@ -277,6 +279,19 @@ const titolo = document.querySelector('#scheda-titolo');
 const descrizione = document.querySelector('#scheda-descrizione');
 const frecciaSx = document.querySelector('.freccia-sx');
 const frecciaDx = document.querySelector('.freccia-dx');
+const misCerchio = document.querySelector('#mis-cerchio');
+const misPallino = document.querySelector('#mis-pallino');
+const misPianeta = document.querySelector('#mis-pianeta');
+
+const TERRA_KM = 12742;
+const MIS_MAX_PX = 90;
+const diamKm = s => parseInt(s.replace(/[^\d]/g, ''), 10);
+const scalaMis = km => Math.sqrt(km / TERRA_KM);
+const maxScala = Math.max(...datiPianeti.map(d => scalaMis(diamKm(d.diametro))));
+const pxMis = km => (scalaMis(km) / maxScala) * MIS_MAX_PX;
+
+misCerchio.style.width = misCerchio.style.height = `${MIS_MAX_PX}px`;
+misPallino.style.width = misPallino.style.height = `${pxMis(TERRA_KM)}px`;
 
 datiPianeti.forEach((dato, indice) =>{
     const btn = document.createElement('button');
@@ -292,7 +307,10 @@ function mostraPianeta(indice) {
 
     placeholder.textContent = dato.nomeEsteso;
     titolo.textContent = dato.nomeEsteso;
-    descrizione.textContent = dato.descrizione ||dato.curiosita;
+    descrizione.textContent = dato.descrizione || dato.curiosita;
+
+    const diametro = diamKm(dato.diametro);
+    misPianeta.style.transform = `scale(${pxMis(diametro) / MIS_MAX_PX})`;
 
     if(dato.video) {
         contenitoreVideo.classList.add('ha-video');
