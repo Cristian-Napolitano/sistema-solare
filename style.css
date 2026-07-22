@@ -24,26 +24,10 @@ body{
 
 }
 
-header{
-background: transparent;
-padding: 16px;
-border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-height: 60px;
-display: flex;
-align-items: center;
-}
-
-header h1{
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-}
-
 #sistema-solare{
     position: relative;
     width: 100vw;
-    height: calc(100vh - 60px);
+    height: 100vh;
     background: transparent;
     overflow: hidden;
 }
@@ -71,7 +55,10 @@ header h1{
     transform: translate(-50%,-50%);
     transition: transform 0.4s ease;
     cursor: pointer;
-    
+    -webkit-tap-highlight-color: transparent; /* niente riquadro grigio/blu al tocco su mobile */
+    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .pianeta img{
     display: block;
@@ -144,6 +131,57 @@ canvas{
     opacity: 1;
 }
 
+/* overlay transizione rotazione: velo nero a tutto schermo + icona centrata */
+#transizione {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.45s ease, visibility 0s linear 0.45s;   /* dissolvenza solo in USCITA */
+}
+#transizione.attiva {
+    opacity: 1;
+    visibility: visible;
+    transition: none;                                             /* comparsa ISTANTANEA: copre prima degli spostamenti */
+}
+#transizione .icona-rotazione {
+    width: 64px;
+    height: 64px;
+    transform-origin: 50% 50%;
+}
+/* mezzo giro, nel verso in cui ruota la pagina; la destra è la sinistra specchiata */
+#transizione.gira-sx .icona-rotazione { animation: giro-sx 0.6s ease-in-out forwards; }
+#transizione.gira-dx .icona-rotazione { animation: giro-dx 0.6s ease-in-out forwards; }
+
+@keyframes giro-sx { from { transform: rotate(0deg); } to { transform: rotate(-180deg); } }
+@keyframes giro-dx { from { transform: scaleX(-1) rotate(0deg); } to { transform: scaleX(-1) rotate(-180deg); } }
+
+/* tasto rotazione manuale: ancorato all'hero, in basso a sinistra */
+#ruota-manuale {
+    position: absolute;
+    left: 20px;
+    bottom: 30px;
+    z-index: 60;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+#ruota-manuale svg { width: 100%; height: 100%; display: block; }
+/* il tasto serve solo su schermi piccoli (telefono, in entrambe le rotazioni); sul desktop no */
+#ruota-manuale { display: none; }
+@media (max-width: 767px), (max-height: 600px) {
+    #ruota-manuale { display: block; }
+}
+
 .freccia-scopri {
     position: absolute;
     bottom: 24px;
@@ -186,7 +224,11 @@ canvas{
     padding: 20px 0 0 0;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
+
+/* freccette in su fisse agli angoli bassi (solo mobile, vedi media query) */
+.hint-su { display: none; }
 
 .selettore-pianeti {
     display: flex;
@@ -207,7 +249,9 @@ canvas{
     transition: color 0.25s ease;
     text-transform: lowercase;
     letter-spacing: 0.05em;
-    position: relative
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 .btn-pianeta:hover {
@@ -335,6 +379,11 @@ canvas{
     font-family: 'Space Grotesk', sans-serif;
 }
 
+/* elementi solo-mobile: nascosti sul desktop, attivati nella media query verticale */
+.scheda-handle { display: none; }
+.lune-mobile { display: none; }
+.lune-lista { display: none; }
+
 .note-lune {
     font-family: 'space mono', monospace;
     position: absolute;
@@ -422,4 +471,278 @@ canvas{
     background: rgba(220, 220, 228, 0.9);
     transform: scale(0);
     transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* nascosto su desktop/landscape: DEVE stare dopo .misuratore per vincere nell'ordine (stessa specificità) */
+.misuratore-mobile { display: none; }
+
+.zoom-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    z-index: 250;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.zoom-overlay.visibile {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: translateX(-50%) scale(0.7); }
+    to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+/* --- Layout verticale (mobile / tablet portrait) --- */
+@media (max-aspect-ratio: 1/1) {
+    #sistema-solare {
+        height: 100dvh;
+    }
+    /* Area di tocco uniforme (opzione B): l'immagine non e' piu' cliccabile;
+       lo e' solo un cerchio centrato di dimensione costante a schermo (--hit, da JS),
+       uguale per tutti i pianeti. Cosi' Saturno non sconfina su Giove e i pianeti
+       piccoli/veloci restano facili da toccare. */
+    .pianeta {
+        pointer-events: none;
+    }
+    .pianeta::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: var(--hit, 56px);
+        height: var(--hit, 56px);
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        pointer-events: auto;
+    }
+    #tooltip {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+        top: auto;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+    }
+    /* overlay zoom: ancorato dal basso (la posizione 'bottom' la mette il JS,
+       appena sopra la barra info), non più centrato verticalmente */
+    .zoom-overlay {
+        top: auto;
+        transform: translateX(-50%) scale(0.9);
+        transform-origin: center bottom;
+    }
+    .zoom-overlay.visibile {
+        transform: translateX(-50%) scale(1);
+    }
+
+    /* ===== Enciclopedia in verticale: video protagonista + tasto descrizione ===== */
+    #enciclopedia {
+        height: 100dvh;
+        padding: 10px 0 0 0;
+        background: #0a0e2a;
+    }
+    .selettore-pianeti {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px 2px;
+        margin: 10px 0 14px;
+        padding: 0 12px;
+    }
+    .indicatore-attivo { display: none; }
+    .btn-pianeta {
+        padding: 9px 4px;
+        font-size: 0.9rem;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    .contenuto-scheda {
+        display: flex;
+        flex-direction: column;
+        background: #0a0e2a;
+        padding-bottom: 275px;   /* spazio per il peek della scheda: spinge il video su */
+    }
+    .area-modello {
+        flex: 1;
+        width: 100%;
+        min-height: 0;
+        background: #0a0e2a;
+        padding: 4px;
+    }
+    .placeholder-video {
+        position: relative;
+        width: 98vw;
+        max-width: 98vw;
+        overflow: hidden;
+    }
+    /* il pianeta riempie solo ~60% del frame video: scalo il video oltre il contenitore
+       e ritaglio i bordi neri, così il disco diventa grande */
+    #video-pianeta { width: 105%; }
+    /* pianeti con anelli: video meno zoomato così gli anelli non vengono tagliati */
+    .placeholder-video.con-anelli #video-pianeta { width: 100%; }   /* Saturno: frame intero */
+    /* Urano: box più alta (usa lo spazio verticale), video fitta l'altezza e ritaglia
+       solo i lati — dove non ci sono anelli — così il disco è grande e gli anelli restano */
+    .placeholder-video.anelli-urano {
+        aspect-ratio: auto;
+        width: 100vw;
+        max-width: 100vw;
+        height: 56vh;
+    }
+    .placeholder-video.anelli-urano #video-pianeta { width: auto; height: 100%; }
+    .note-lune, .area-modello .misuratore { display: none; }
+
+    /* frecce nascoste in mobile: si cambia pianeta con swipe o dal selettore */
+    .freccia-nav { display: none; }
+
+    /* ===== Scheda a comparsa: contenuta nella sezione (absolute), non fixed ===== */
+    /* peek (chiusa) = nome + misuratore + note lune; tirata su = descrizione completa */
+    .area-info {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 85vh;
+        z-index: 300;
+        background: #1a0a1f;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+        transform: translateY(calc(85vh - 275px));   /* mostra solo il peek */
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        overflow: hidden;
+        padding: 0 24px 40px 24px;
+        justify-content: flex-start;
+        align-items: stretch;
+    }
+    .area-info.aperta { transform: translateY(0); }
+
+    .scheda-handle {
+        display: block;
+        width: 44px;
+        height: 5px;
+        flex: 0 0 auto;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        margin: 12px auto 14px auto;
+    }
+    .area-info h2 {
+        font-size: 1.5rem;
+        margin: 0 0 14px 0;
+        text-align: center;
+    }
+    .misuratore-mobile {
+        display: flex;
+        position: static;
+        justify-content: center;
+        margin: 0 0 22px 0;
+        pointer-events: none;
+    }
+    .lune-mobile {
+        display: block;
+        text-align: center;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.55);
+        margin: 0 0 8px 0;
+    }
+    .area-info p {
+        font-size: 1rem;
+        line-height: 1.55;
+        max-width: none;
+    }
+
+    /* peek: la descrizione del pianeta è nascosta finché non si alza la scheda */
+    #scheda-descrizione { display: none; }
+    /* alzata: descrizione centrata verticalmente nello spazio, così sta tutta senza scroll */
+    .area-info.aperta #scheda-descrizione { display: block; margin: auto 0; }
+    /* alzata: spariscono misuratore e note lune, resta la descrizione */
+    .area-info.aperta .misuratore-mobile,
+    .area-info.aperta .lune-mobile { display: none; }
+
+    /* freccette in su fisse agli angoli bassi dello schermo */
+    .hint-su {
+        display: block;
+        position: absolute;
+        bottom: 18px;
+        z-index: 305;
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.4);
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 0.35s ease-in 0.4s;   /* riappaiono gradualmente, poco dopo la chiusura */
+    }
+    .hint-su-sx { left: 18px; }
+    .hint-su-dx { right: 18px; }
+    /* scheda alzata: le freccette spariscono subito */
+    #enciclopedia:has(.area-info.aperta) .hint-su {
+        opacity: 0;
+        transition: opacity 0.2s ease 0s;
+    }
+}
+
+/* --- Enciclopedia: landscape mobile (telefono ruotato). Come desktop ma proporzionata --- */
+@media (min-aspect-ratio: 1/1) and (max-height: 600px) {
+    #enciclopedia { padding-top: 10px; }
+    .selettore-pianeti { margin-bottom: 10px; }
+
+    .area-modello { padding: 12px; }
+    #video-pianeta { width: 315px; }        /* ridotto per stare dentro l'altezza */
+
+    /* niente frecce di navigazione: si cambia pianeta col selettore in alto */
+    .freccia-nav { display: none; }
+
+    /* descrizione centrata nel pannello destro, senza scroll */
+    .area-info {
+        padding: 10px 26px;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .area-info h2 { font-size: 1.2rem; margin: 0 0 8px 0; }
+    .area-info p { font-size: 0.7rem; line-height: 1.3; margin: 0; }
+
+    /* misuratore proporzionato allo schermo piccolo */
+    .area-modello .misuratore { transform: scale(0.66); transform-origin: bottom right; }
+
+    /* note-lune in ALTO a sinistra: asterisco FERMO e cliccabile; la lista si apre sotto */
+    .note-lune {
+        display: block;
+        top: 16px;
+        bottom: auto;
+        width: auto;
+        cursor: pointer;
+        outline: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;   /* via il contorno blu al tap */
+    }
+    .note-lune .testo-lune { display: none; }        /* niente typewriter in landscape */
+    .note-lune .asterisco { font-size: 1rem; padding: 8px; margin: -8px; }
+
+    .lune-lista {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: calc(100% + 6px);           /* sotto l'asterisco: non lo sposta */
+        margin: 0;
+        padding: 0;
+        max-width: 260px;
+        list-style: none;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.7rem;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.6);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0s linear 0.4s;   /* stessa dissolvenza di prima */
+    }
+    .note-lune.aperta .lune-lista {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.4s ease;
+    }
+    .lune-lista .lune-vuoto { color: rgba(255, 255, 255, 0.35); font-style: italic; }
 }

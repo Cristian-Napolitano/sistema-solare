@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>sistema solare</title>
 <link rel="stylesheet" href="style.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,9 +14,6 @@
 
 <body>
 
-    <header>
-        <h1>Sistema Solare</h1>
-    </header>
     <section id="sistema-solare">
         <canvas></canvas>
         <div class="sole">
@@ -28,6 +25,22 @@
             <span>the more you know</span>
             <div class="freccia-icona">↓</div>
         </div>
+
+        <!-- tasto rotazione manuale: ruota il layout a mano (per chi ha la rotazione auto disattivata) -->
+        <button id="ruota-manuale" aria-label="Ruota la pagina">
+            <svg viewBox="0 0 80 80" aria-hidden="true">
+                <defs>
+                    <marker id="freccia-ruota" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+                        <path d="M1 1L8 5L1 9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </marker>
+                </defs>
+                <g style="opacity:.5">
+                    <path d="M61.7,29.9 A24,24 0 0 0 18.3,29.9" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" marker-end="url(#freccia-ruota)"/>
+                    <path d="M18.3,50.1 A24,24 0 0 0 61.7,50.1" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" marker-end="url(#freccia-ruota)"/>
+                </g>
+            </svg>
+        </button>
+
     </section>
     <section id="enciclopedia">
         <nav class="selettore-pianeti">
@@ -45,6 +58,7 @@
                 <div class="note-lune">
                     <span class="asterisco">*</span>
                     <span id="testo-lune" class="testo-lune"></span>
+                    <ul id="lune-lista" class="lune-lista" aria-hidden="true"></ul>
                 </div>
             <div class="misuratore">
                 <div class="mis-terra">
@@ -58,13 +72,43 @@
             </div>
 
             <div class="area-info">
+                <div class="scheda-handle"></div>
                 <h2 id="scheda-titolo">Mercurio</h2>
+                <div class="misuratore misuratore-mobile">
+                    <div class="mis-terra">
+                        <span class="mis-etichetta">Terra</span>
+                        <span class="mis-pallino" id="mis-pallino-m"></span>
+                    </div>
+                    <span class="mis-cerchio" id="mis-cerchio-m">
+                        <span class="mis-pianeta" id="mis-pianeta-m"></span>
+                    </span>
+                </div>
+                <div class="lune-mobile" id="lune-mobile"></div>
                 <p id="scheda-descrizione">Descrizione del pianeta...</p>
             </div>
 
             <button class="freccia-nav freccia-dx" aria-label="Pianeta successivo">▶</button>
         </div>
+
+        <span class="hint-su hint-su-sx" aria-hidden="true">↑</span>
+        <span class="hint-su hint-su-dx" aria-hidden="true">↑</span>
     </section>
+
+    <!-- overlay transizione rotazione: velo nero + icona a due frecce che fa un giro -->
+    <div id="transizione" aria-hidden="true">
+        <svg class="icona-rotazione" width="120" height="120" viewBox="0 0 80 80" aria-hidden="true">
+            <defs>
+                <marker id="freccia-rot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+                    <path d="M1 1L8 5L1 9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+            </defs>
+            <g style="opacity:.5">
+                <path d="M61.7,29.9 A24,24 0 0 0 18.3,29.9" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" marker-end="url(#freccia-rot)"/>
+                <path d="M18.3,50.1 A24,24 0 0 0 61.7,50.1" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" marker-end="url(#freccia-rot)"/>
+            </g>
+        </svg>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
