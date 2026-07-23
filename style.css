@@ -708,41 +708,14 @@ canvas{
     /* misuratore proporzionato allo schermo piccolo */
     .area-modello .misuratore { transform: scale(0.66); transform-origin: bottom right; }
 
-    /* note-lune in ALTO a sinistra: asterisco FERMO e cliccabile; la lista si apre sotto */
+    /* note-lune: identica al desktop (asterisco + descrizione typewriter); la descrizione appare al TAP invece che all'hover */
+    .lune-lista { display: none; }
     .note-lune {
-        display: block;
-        top: 16px;
+        top: 8px;           /* in alto a sinistra, leggermente più su */
         bottom: auto;
-        width: auto;
         cursor: pointer;
-        outline: none;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;   /* via il contorno blu al tap */
+        -webkit-tap-highlight-color: transparent;
     }
-    .note-lune .testo-lune { display: none; }        /* niente typewriter in landscape */
-    .note-lune .asterisco { font-size: 1rem; padding: 8px; margin: -8px; }
-
-    .lune-lista {
-        display: block;
-        position: absolute;
-        left: 0;
-        top: calc(100% + 6px);           /* sotto l'asterisco: non lo sposta */
-        margin: 0;
-        padding: 0;
-        max-width: 260px;
-        list-style: none;
-        font-family: 'Space Mono', monospace;
-        font-size: 0.7rem;
-        line-height: 1.55;
-        color: rgba(255, 255, 255, 0.6);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.4s ease, visibility 0s linear 0.4s;   /* stessa dissolvenza di prima */
-    }
-    .note-lune.aperta .lune-lista {
-        opacity: 1;
-        visibility: visible;
-        transition: opacity 0.4s ease;
-    }
+    .note-lune.aperta .testo-lune { opacity: 1; }
     .lune-lista .lune-vuoto { color: rgba(255, 255, 255, 0.35); font-style: italic; }
 }

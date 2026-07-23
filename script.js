@@ -591,13 +591,23 @@ noteLune.addEventListener('mouseleave', () =>{
     clearInterval(intervalloDigitazione);
 })
 
-// landscape mobile: click sull'asterisco APRE la lista (non toggle); un click altrove la chiude
+// landscape (touch): il tap sull'asterisco fa comparire la descrizione con lo stesso typewriter del desktop; un tap altrove la chiude
 noteLune.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (noteLune.classList.contains('aperta')) return;
     noteLune.classList.add('aperta');
+    const testo = datiPianeti[pianetaCorrente].luneNotevoli;
+    let i = 0;
+    testoLune.textContent = '';
+    clearInterval(intervalloDigitazione);
+    intervalloDigitazione = setInterval(() => {
+        if (i < testo.length) { testoLune.textContent += testo[i]; i++; }
+        else clearInterval(intervalloDigitazione);
+    }, 15);
 })
 document.addEventListener('click', () => {
     noteLune.classList.remove('aperta');
+    clearInterval(intervalloDigitazione);
 })
 
 
