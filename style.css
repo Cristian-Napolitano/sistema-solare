@@ -178,7 +178,7 @@ canvas{
 #ruota-manuale svg { width: 100%; height: 100%; display: block; }
 /* il tasto serve solo su schermi piccoli (telefono, in entrambe le rotazioni); sul desktop no */
 #ruota-manuale { display: none; }
-@media (max-width: 767px), (max-height: 600px) {
+@media (max-width: 767px), (max-height: 600px), (hover: none) {
     #ruota-manuale { display: block; }
 }
 
@@ -683,6 +683,52 @@ canvas{
         opacity: 0;
         transition: opacity 0.2s ease 0s;
     }
+}
+
+/* --- Tablet portrait: finestra info più grande (telefono resta com'è) --- */
+@media (max-aspect-ratio: 1/1) and (min-width: 520px) {
+    #tooltip { padding: 22px 28px; border-radius: 16px; }
+    #tooltip h2 { font-size: 1.9rem; margin-bottom: 16px; }
+    #tooltip .info-riga { font-size: 1.15rem; margin-bottom: 9px; }
+    #tooltip .curiosita { font-size: 1.05rem; margin-top: 16px; padding-top: 16px; }
+
+    /* sezione 2 (enciclopedia): testi tarati sul telefono -> troppo piccoli sul tablet */
+    #enciclopedia .btn-pianeta { font-size: 1.2rem; }
+    #enciclopedia .area-info h2 { font-size: 2rem; }
+    #enciclopedia .lune-mobile { font-size: 1.05rem; }
+    #enciclopedia .area-info p { font-size: 1.55rem; line-height: 1.55; }
+}
+
+/* --- Tablet touch in landscape: area di tocco uniforme (come in verticale), non il telefono
+   coricato (min-height 600) né il desktop/laptop col mouse (hover) --- */
+@media (hover: none) and (min-aspect-ratio: 1/1) and (min-height: 600px) {
+    .pianeta { pointer-events: none; }
+    .pianeta::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: var(--hit, 56px);
+        height: var(--hit, 56px);
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        pointer-events: auto;
+    }
+
+    /* sezione 2: video più grande, niente frecce (si cambia con swipe/selettore),
+       asterisco spostato in alto sopra il pianeta e apribile al tap (come nel landscape telefono) */
+    #video-pianeta { width: 560px; }
+    /* descrizioni lunghe (es. Saturno) non ci stanno in 820px: scroll invece di taglio */
+    .area-info { overflow-y: auto; }
+    .freccia-nav { display: none; }
+    .lune-lista { display: none; }
+    .note-lune {
+        top: 8px;
+        bottom: auto;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .note-lune.aperta .testo-lune { opacity: 1; }
 }
 
 /* --- Enciclopedia: landscape mobile (telefono ruotato). Come desktop ma proporzionata --- */

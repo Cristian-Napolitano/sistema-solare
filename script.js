@@ -120,6 +120,7 @@ const RAGGIO_MAX = 1080;
 const FATTORE_SPILL_VERTICALE = 2.7;
 const FATTORE_SPILL_ORIZZONTALE = 0.95; // <=1: tutte le orbite entrano nello schermo (Urano/Nettuno cliccabili); >1 = sbordano
 const ALT_LANDSCAPE_MOBILE = 600;       // sotto quest'altezza (px) è un telefono in landscape: si scala. Sopra (desktop/tablet) resta SCALA=1
+const LARGH_RIFERIMENTO = 1500;         // riferimento scala tablet landscape: più basso = pianeti più grandi (ma esterni sbordano di più)
 const DIM_PIANETI_ORIZZONTALE = 1.9;    // ingrandimento dei pianeti solo in landscape mobile (da tarare a occhio)
 const COMPRESSIONE_ORIZZONTALE = 0.6;   // 0 = taglie reali (Giove enorme), 1 = tutti uguali; avvicina le dimensioni in landscape mobile
 const PROSPETTIVA_ORIZZ_MOBILE = 0.5;   // quanto conta l'effetto profondità in landscape mobile: 1 = come desktop (davanti 2×), 0 = piatto
@@ -128,12 +129,25 @@ const SOLE_Y_VERTICALE = 0.15;  // più basso = più in alto (0.5 = centro)
 const ALLUNGA_Y_VERTICALE = 1.1; // rapporto altezza/larghezza orbite: 1.0 = cerchio, >1 = ellisse verticale (era 0.85)
 const DIM_PIANETI_VERTICALE = 2.3;  // ingrandimento pianeti solo in verticale
 const DIM_SOLE_VERTICALE = 1.3;     // ingrandimento Sole solo in verticale
+// tablet in verticale (portrait largo, es. iPad 820×1180): il ramo verticale è tarato sul
+// telefono e qui risultava troppo grande / fuori schermo. Set dedicato -> telefono intatto.
+const SOGLIA_TABLET_VERT = 520;      // larghezza px: >= tablet/mini-tablet (es. Surface Duo 540), < telefono
+const FATTORE_SPILL_TABLET = 1.9;    // overall: più basso = tutto più piccolo, orbite più raccolte
+const SOLE_X_TABLET = 0.5;           // = telefono
+const SOLE_Y_TABLET = 0.15;          // = telefono
+const ALLUNGA_Y_TABLET = 1.0;        // stira le orbite in verticale, ma resta sopra la scritta in fondo
+const DIM_PIANETI_TABLET = 2.5;      // pianeti un filo più grandi sul tablet
+const DIM_SOLE_TABLET = 1.3;         // = telefono
+// tablet portrait: rimpicciolimento per-pianeta (solo qui). Terra e Giove sono grandi e a
+// orbite ravvicinate si toccano: <1 = più piccoli. Gli altri restano a 1.
+const RIMPICC_TABLET = { terra: 0.85, giove: 0.85 };
 const COMPRESSIONE_VERTICALE = 0; // 0 = dimensioni reali, 1 = tutti uguali (piccoli più grandi)
 const MEDIA_DIM = 70;               // dimensione media di riferimento per la compressione
 const BOOST_FUORI_SCHERMO = 10;     // quanto accelerano i pianeti quando escono dallo schermo (solo verticale)
 const VEL_MAX_LINEARE = 2.0;        // px/frame max sullo schermo: rallenta i pianeti esterni (Urano/Nettuno) così sono toccabili
 const DIAM_TAP = 56;                // diametro (px schermo) dell'area di tocco circolare, uguale per tutti i pianeti su mobile
 const ZOOM_LARGH_VERTICALE = 0.8;   // frazione di schermo occupata dal DISCO del pianeta allo zoom (uguale per tutti)
+const ZOOM_LARGH_TABLET = 0.62;     // tablet portrait: disco allo zoom (coordinato con la finestra info)
 const ZOOM_SOVRAPP_BARRA = 25;      // px di sovrapposizione dell'overlay sopra la barra info
 // quanto il disco opaco riempie ciascun PNG (misurato): serve a rendere i dischi
 // tutti della stessa grandezza allo zoom, compensando l'inquadratura diversa dei file.
@@ -152,6 +166,16 @@ const MARGINE_BOOST = 90;           // quanto oltre il bordo deve stare il centr
 let SCALA = 1;
 let VERTICALE = false;
 let ORIZZ_MOBILE = false;   // true = telefono in landscape (orizzontale piccolo)
+let TABLET_VERT = false;    // true = verticale ma schermo largo (tablet portrait)
+let TABLET_LAND = false;    // true = tablet touch in landscape (non telefono, non laptop)
+// valori verticali ATTIVI: default = telefono; setup() li commuta sul set tablet se largo
+let VSPILL = FATTORE_SPILL_VERTICALE;
+let VSOLE_X = SOLE_X_VERTICALE;
+let VSOLE_Y = SOLE_Y_VERTICALE;
+let VALLUNGA_Y = ALLUNGA_Y_VERTICALE;
+let VDIM_PIANETI = DIM_PIANETI_VERTICALE;
+let VDIM_SOLE = DIM_SOLE_VERTICALE;
+let VZOOM_LARGH = ZOOM_LARGH_VERTICALE;
 // orientamento corrente della pagina (true = verticale). Sorgente unica: la segue il dispositivo
 // oppure la forza il tasto di rotazione manuale.
 let orientamentoCorrente = window.innerWidth < window.innerHeight;
@@ -175,7 +199,7 @@ class Pianeta{
         }
 
         const sinA = Math.sin(this.angolo);
-        const rY = VERTICALE ? this.raggioX * ALLUNGA_Y_VERTICALE : this.raggioY;
+        const rY = VERTICALE ? this.raggioX * VALLUNGA_Y : this.raggioY;
         const x = Math.cos(this.angolo) * this.raggioX * SCALA;
         const y = sinA * rY * SCALA;
 
@@ -184,7 +208,7 @@ class Pianeta{
 
         if (pianetaEvidenziato === null) {
             let v = this.velocita;
-            if (VERTICALE) {
+            if (VERTICALE || TABLET_LAND) {
                 // cap velocità lineare: i pianeti con orbita grande (Urano/Nettuno) sfrecciano troppo per essere toccati
                 const raggioPx = this.raggioX * SCALA;
                 const vMax = VEL_MAX_LINEARE / raggioPx;
@@ -201,7 +225,8 @@ class Pianeta{
         let dimFatt = 1;
         if (VERTICALE) {
             const dimEff = this.dimensioneBase * (1 - COMPRESSIONE_VERTICALE) + MEDIA_DIM * COMPRESSIONE_VERTICALE;
-            dimFatt = DIM_PIANETI_VERTICALE * (dimEff / this.dimensioneBase);
+            dimFatt = VDIM_PIANETI * (dimEff / this.dimensioneBase);
+            if (TABLET_VERT) dimFatt *= (this.rimpiccTablet || 1);
         } else if (ORIZZ_MOBILE) {
             // compressione: avvicina le taglie alla media, così Giove/Saturno non dominano
             const dimEff = this.dimensioneBase * (1 - COMPRESSIONE_ORIZZONTALE) + MEDIA_DIM * COMPRESSIONE_ORIZZONTALE;
@@ -212,9 +237,12 @@ class Pianeta{
         this.elemento.style.top = `${py}px`;
         const scalaFinale = perspettiva * SCALA * dimFatt;
         this.elemento.style.transform = `translate(-50%, -50%) scale(${scalaFinale})`;
-        // area di tocco: la ::after è scalata dal div, quindi la dimensiono all'inverso
-        // così a schermo resta sempre DIAM_TAP px per ogni pianeta (uniforme, centrata sul disco)
-        this.elemento.style.setProperty('--hit', `${DIAM_TAP / scalaFinale}px`);
+        // area di tocco: la ::after è scalata dal div, quindi la dimensiono all'inverso.
+        // telefono/desktop: fissa a DIAM_TAP px. Tablet portrait: i dischi sono grandi, quindi
+        // l'area segue il disco reale (minimo DIAM_TAP) così tocchi il pianeta che vedi, non il vicino.
+        const discoPx = this.dimensioneBase * scalaFinale;
+        const hitScreen = (TABLET_VERT || TABLET_LAND) ? Math.max(DIAM_TAP, discoPx * 0.85) : DIAM_TAP;
+        this.elemento.style.setProperty('--hit', `${hitScreen / scalaFinale}px`);
         this.elemento.style.zIndex = y > 0 ? 20 : 5;
     }
 
@@ -259,12 +287,13 @@ datiPianeti.forEach((dato, indice)=> {
 
     const angoloIniziale = (indice / datiPianeti.length) * Math.PI * 2; 
     const p = new Pianeta(div, dato.raggioX, dato.raggioY, dato.velocita, angoloIniziale, dato.dimensione);
+    p.rimpiccTablet = RIMPICC_TABLET[dato.nome] || 1;   // fattore taglia per-pianeta, solo tablet portrait
     pianeti.push(p);
 
     const attivaPianeta = () => {
         pianetaEvidenziato = p;
         // larghezza overlay tarata sul disco (uniforme per tutti), con tetto di sicurezza
-        const larghOverlay = Math.min(window.innerWidth * 1.8, window.innerWidth * ZOOM_LARGH_VERTICALE / (DISCO_FRAC[dato.nome] || 1));
+        const larghOverlay = Math.min(window.innerWidth * 1.8, window.innerWidth * VZOOM_LARGH / (DISCO_FRAC[dato.nome] || 1));
         if (VERTICALE) {
             zoomOverlay.src = `immagini/${dato.nome}.png`;
             zoomOverlay.style.width = `${larghOverlay}px`;
@@ -380,19 +409,32 @@ function setup(){
     canvas.height =section.clientHeight;
 
     VERTICALE = orientamentoCorrente;
+    TABLET_VERT = VERTICALE && window.innerWidth >= SOGLIA_TABLET_VERT;
+    VSPILL       = TABLET_VERT ? FATTORE_SPILL_TABLET : FATTORE_SPILL_VERTICALE;
+    VSOLE_X      = TABLET_VERT ? SOLE_X_TABLET        : SOLE_X_VERTICALE;
+    VSOLE_Y      = TABLET_VERT ? SOLE_Y_TABLET        : SOLE_Y_VERTICALE;
+    VALLUNGA_Y   = TABLET_VERT ? ALLUNGA_Y_TABLET     : ALLUNGA_Y_VERTICALE;
+    VDIM_PIANETI = TABLET_VERT ? DIM_PIANETI_TABLET   : DIM_PIANETI_VERTICALE;
+    VDIM_SOLE    = TABLET_VERT ? DIM_SOLE_TABLET      : DIM_SOLE_VERTICALE;
+    VZOOM_LARGH  = TABLET_VERT ? ZOOM_LARGH_TABLET    : ZOOM_LARGH_VERTICALE;
     ORIZZ_MOBILE = !VERTICALE && window.innerHeight < ALT_LANDSCAPE_MOBILE;
+    TABLET_LAND = !VERTICALE && !ORIZZ_MOBILE && window.matchMedia('(hover: none)').matches;
     if (VERTICALE) {
-        SCALA = (window.innerWidth / 2) / RAGGIO_MAX * FATTORE_SPILL_VERTICALE;
+        SCALA = (window.innerWidth / 2) / RAGGIO_MAX * VSPILL;
     } else if (ORIZZ_MOBILE) {
         // telefono in landscape: rimpicciolisce per entrare (tetto a 1)
         SCALA = Math.min(1, (window.innerWidth / 2) / RAGGIO_MAX * FATTORE_SPILL_ORIZZONTALE);
+    } else if (TABLET_LAND) {
+        // tablet in landscape (touch, non un laptop): stessa scena del desktop ma scalata alla
+        // larghezza, così le risoluzioni si assomigliano. Laptop/PC (hover) restano a SCALA=1.
+        SCALA = Math.min(1, window.innerWidth / LARGH_RIFERIMENTO);
     } else {
-        SCALA = 1;   // desktop / tablet: identico a oggi
+        SCALA = 1;   // laptop / desktop: esperienza piena, identica tra loro
     }
 
     if (VERTICALE) {
-        soleCentroX = window.innerWidth * SOLE_X_VERTICALE;
-        soleCentroY = section.clientHeight * SOLE_Y_VERTICALE;
+        soleCentroX = window.innerWidth * VSOLE_X;
+        soleCentroY = section.clientHeight * VSOLE_Y;
         sole.style.left = `${soleCentroX}px`;
         sole.style.top = `${soleCentroY}px`;
     } else {
@@ -402,12 +444,12 @@ function setup(){
         soleCentroY = sole.offsetTop;
     }
 
-    sole.querySelector('img').style.width = `${200 * SCALA * (VERTICALE ? DIM_SOLE_VERTICALE : 1)}px`;
+    sole.querySelector('img').style.width = `${200 * SCALA * (VERTICALE ? VDIM_SOLE : 1)}px`;
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
     ctx.lineWidth = 1;
     datiPianeti.forEach(dato =>{
-        const rY = VERTICALE ? dato.raggioX * ALLUNGA_Y_VERTICALE : dato.raggioY;
+        const rY = VERTICALE ? dato.raggioX * VALLUNGA_Y : dato.raggioY;
         ctx.beginPath()
         ctx.ellipse(soleCentroX, soleCentroY, dato.raggioX * SCALA, rY * SCALA, 0, 0,  Math.PI * 2)
         ctx.stroke()
@@ -429,12 +471,12 @@ const overlayTransizione = document.getElementById('transizione');
 const tastoRuota = document.getElementById('ruota-manuale');
 
 function eseguiTransizione(verso) {
-    overlayTransizione.classList.add('attiva');            // nero istantaneo: copre subito
+    overlayTransizione.classList.add('attiva');
     overlayTransizione.classList.remove('gira-sx', 'gira-dx');
     void overlayTransizione.offsetWidth;                   // reflow: riavvia l'animazione del giro
     overlayTransizione.classList.add(verso);
     setup();                                               // ricostruisce il layout nello stesso istante, sotto il nero
-    setTimeout(() => overlayTransizione.classList.remove('attiva'), 700); // poi svanisce dolcemente
+    setTimeout(() => overlayTransizione.classList.remove('attiva'), 700);
 }
 
 // verso della pagina: verso l'orizzontale gira a sinistra, verso il verticale a destra
