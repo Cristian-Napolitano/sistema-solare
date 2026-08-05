@@ -557,6 +557,27 @@ datiPianeti.forEach((dato, indice) =>{
     selettore.appendChild(btn);
 });
 
+// --- Precaricamento furbo dei video ---
+// Il video del pianeta corrente si carica da solo quando viene mostrato.
+// Qui prefetchiamo in background i due pianeti adiacenti (precedente/successivo),
+// così alla navigazione col tasto/freccia il video è gia in cache e parte subito.
+// Rinviato a "idle" per non competere con l'hero e col video corrente.
+const videoPrecaricati = new Map(); // url -> <video> tenuto in vita per non farlo scartare
+function precaricaVideo(url) {
+    if (!url || videoPrecaricati.has(url)) return;
+    const v = document.createElement('video');
+    v.preload = 'auto';
+    v.muted = true;
+    v.src = url;                       // non aggiunto al DOM: scarica e resta in cache
+    videoPrecaricati.set(url, v);
+}
+function precaricaVicini(indice) {
+    const n = datiPianeti.length;
+    [datiPianeti[(indice - 1 + n) % n], datiPianeti[(indice + 1) % n]]
+        .forEach(d => d && d.video && precaricaVideo(d.video));
+}
+const rinviaIdle = window.requestIdleCallback || (cb => setTimeout(cb, 300));
+
 function mostraPianeta(indice) {
     pianetaCorrente = indice;
     const dato = datiPianeti[indice];
@@ -607,6 +628,8 @@ function mostraPianeta(indice) {
         indicatore.style.width = `${larghezzaTrattino}px`;
     }
 
+    // prefetch dei due pianeti adiacenti, a idle
+    rinviaIdle(() => precaricaVicini(indice));
 }
 
 const noteLune = document.querySelector('.note-lune');

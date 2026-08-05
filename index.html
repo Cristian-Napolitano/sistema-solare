@@ -109,31 +109,6 @@
         </svg>
     </div>
 
-    <!-- INDICATORE VIEWPORT TEMPORANEO — rimuovere dopo la taratura -->
-    <div id="vp-debug" style="position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.82);color:#0f0;font:12px/1.45 monospace;padding:8px 10px;border:1px solid #0f0;border-radius:6px;pointer-events:none;white-space:pre">…</div>
-    <script>
-    (function(){
-        var el = document.getElementById('vp-debug');
-        function agg(){
-            var w = window.innerWidth, h = window.innerHeight;
-            var ar = (w/h).toFixed(3);
-            var dpr = window.devicePixelRatio || 1;
-            var touch = window.matchMedia('(hover:none)').matches ? 'touch (hover:none)' : 'mouse (hover:hover)';
-            var orient = w < h ? 'verticale' : 'orizzontale';
-            el.textContent =
-                'viewport CSS: ' + w + ' x ' + h + '\n' +
-                'aspect ratio: ' + ar + '  (' + orient + ')\n' +
-                'DPR: ' + dpr + '   fisico: ' + Math.round(w*dpr) + ' x ' + Math.round(h*dpr) + '\n' +
-                'input: ' + touch + '\n' +
-                'screen: ' + screen.width + ' x ' + screen.height;
-        }
-        agg();
-        window.addEventListener('resize', agg);
-        window.addEventListener('orientationchange', function(){ setTimeout(agg, 300); });
-    })();
-    </script>
-    <!-- FINE INDICATORE VIEWPORT TEMPORANEO -->
-
     <script src="script.js"></script>
 </body>
 </html>
