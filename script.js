@@ -278,7 +278,7 @@ datiPianeti.forEach((dato, indice)=> {
     div.className = 'pianeta';
 
     const img = document.createElement('img');
-    img.src = `immagini/${dato.nome}.png`;
+    img.src = `immagini/${dato.nome}.webp`;
     img.alt = dato.nome;
     img.style.width = `${dato.dimensione}px`;
     
@@ -295,7 +295,7 @@ datiPianeti.forEach((dato, indice)=> {
         // larghezza overlay tarata sul disco (uniforme per tutti), con tetto di sicurezza
         const larghOverlay = Math.min(window.innerWidth * 1.8, window.innerWidth * VZOOM_LARGH / (DISCO_FRAC[dato.nome] || 1));
         if (VERTICALE) {
-            zoomOverlay.src = `immagini/${dato.nome}.png`;
+            zoomOverlay.src = `immagini/${dato.nome}.webp`;
             zoomOverlay.style.width = `${larghOverlay}px`;
             zoomOverlay.classList.add('visibile');
             // ri-triggera l'animazione d'ingresso a ogni attivazione: così cambiando pianeta
@@ -457,12 +457,17 @@ function setup(){
 }
 
 
+let animazioneAttiva = false;
 function anima() {
-   
     pianeti.forEach(p=> p.update());
-    requestAnimationFrame(anima);
-
+    if (animazioneAttiva) requestAnimationFrame(anima);
 }
+function avviaAnimazione() {
+    if (animazioneAttiva) return;
+    animazioneAttiva = true;
+    requestAnimationFrame(anima);
+}
+function fermaAnimazione() { animazioneAttiva = false; }
 
 setup();
 
@@ -501,7 +506,15 @@ tastoRuota.addEventListener('click', () => {
     eseguiTransizione(transizioneVerso());
 });
 
-anima();
+// Pausa il loop quando l'hero esce dallo schermo: libera il thread principale mentre si
+// scrolla nella seconda sezione (toglie lo scattino) e lo riavvia al rientro nell'hero.
+if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+        entries[0].isIntersecting ? avviaAnimazione() : fermaAnimazione();
+    }, { threshold: 0 }).observe(section);
+} else {
+    avviaAnimazione();   // fallback browser senza IntersectionObserver
+}
 
 let pianetaCorrente = 0;
 
