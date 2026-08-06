@@ -578,6 +578,29 @@ function precaricaVicini(indice) {
 }
 const rinviaIdle = window.requestIdleCallback || (cb => setTimeout(cb, 300));
 
+// --- Dissolvenza al cambio pianeta ---
+// Fade-out del video corrente (a nero, coerente con lo sfondo), cambio src mentre è
+// invisibile, fade-in quando il nuovo inizia a girare ('playing'). Toglie lo stacco secco.
+const DISSOLVENZA_MS = 260;   // deve combaciare con la transition CSS su #video-pianeta
+let dissolvenzaTimer = null;
+function cambiaVideoConDissolvenza(url) {
+    clearTimeout(dissolvenzaTimer);
+    const rivela = () => videoPianeta.classList.remove('sfumato');   // fade-in
+    const carica = () => {
+        videoPianeta.src = url;
+        videoPianeta.addEventListener('playing', rivela, { once: true });
+        videoPianeta.play().catch(rivela);   // se il play non parte, mostralo comunque
+    };
+    // primo caricamento (nessun video attuale): niente fade-out, entra e basta
+    if (!videoPianeta.getAttribute('src')) {
+        videoPianeta.classList.add('sfumato');
+        carica();
+        return;
+    }
+    videoPianeta.classList.add('sfumato');       // fade-out del corrente
+    dissolvenzaTimer = setTimeout(carica, DISSOLVENZA_MS);
+}
+
 function mostraPianeta(indice) {
     pianetaCorrente = indice;
     const dato = datiPianeti[indice];
@@ -603,10 +626,14 @@ function mostraPianeta(indice) {
 
     if(dato.video) {
         contenitoreVideo.classList.add('ha-video');
-        if (!videoPianeta.src.endsWith(dato.video)) videoPianeta.src = dato.video;
-        videoPianeta.play(() => {});
+        if (!videoPianeta.src.endsWith(dato.video)) {
+            cambiaVideoConDissolvenza(dato.video);   // pianeta diverso -> dissolvenza
+        } else {
+            videoPianeta.play().catch(() => {});     // stesso pianeta (es. resize) -> niente fade
+        }
     } else {
         contenitoreVideo.classList.remove('ha-video');
+        videoPianeta.classList.remove('sfumato');
         videoPianeta.pause();
         videoPianeta.removeAttribute('src');
         videoPianeta.load();
