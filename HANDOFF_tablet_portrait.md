@@ -34,4 +34,7 @@ Manopole a occhio: le costanti sopra. Sintassi JS verificata (`node --check`).
 ## Da fare (prossima sessione)
 1. **Verifica su device reali/aspect ratio vari**: telefoni piccoli (360×640), tablet diversi
    (iPad 810×1080, iPad Pro 1024/1366), pieghevoli. Controllare che nessuno cada nel ramo sbagliato.
+   - ⚠️ **375×667 (iPhone SE / 8) — DA SISTEMARE**: Cristian ha notato delle lacune a questa
+     risoluzione. Aspect ratio 0.562, ramo VERTICALE tarato su 390px → più stretto e più corto,
+     probabile causa dei problemi di layout. Da verificare e correggere.
 2. **Deploy** gratuito online (GitHub Pages / Netlify / Vercel).
