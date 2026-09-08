@@ -580,7 +580,9 @@ canvas{
     }
     .placeholder-video {
         position: relative;
-        width: 98vw;
+        height: 100%;
+        aspect-ratio: 1;
+        width: auto;
         max-width: 98vw;
         overflow: hidden;
     }
@@ -592,10 +594,10 @@ canvas{
     /* Urano: box più alta (usa lo spazio verticale), video fitta l'altezza e ritaglia
        solo i lati — dove non ci sono anelli — così il disco è grande e gli anelli restano */
     .placeholder-video.anelli-urano {
-        aspect-ratio: auto;
-        width: 100vw;
+        aspect-ratio: 1;
+        width: auto;
+        height: 100%;
         max-width: 100vw;
-        height: 56vh;
     }
     .placeholder-video.anelli-urano #video-pianeta { width: auto; height: 100%; }
     .note-lune, .area-modello .misuratore { display: none; }
@@ -605,6 +607,8 @@ canvas{
 
     /* ===== Scheda a comparsa: contenuta nella sezione (absolute), non fixed ===== */
     /* peek (chiusa) = nome + misuratore + note lune; tirata su = descrizione completa */
+    /* Peek (chiusa) = striscia in basso: pannello alto 85vh spinto giù così se ne vede solo
+       la punta (275px). Meccanica invariata (funzionava): non toccare i valori. */
     .area-info {
         position: absolute;
         left: 0;
@@ -622,7 +626,37 @@ canvas{
         justify-content: flex-start;
         align-items: stretch;
     }
-    .area-info.aperta { transform: translateY(0); }
+    /* Aperta = BOLLA: overlay fisso staccato da tutti i bordi (inset 12px), angoli curvi
+       tutt'intorno. position:fixed = ancorata alla parte VISIBILE dello schermo, così non
+       dipende da 100dvh (che sul telefono è più alto del visibile e spingeva fuori le scritte). */
+    .area-info.aperta {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        height: auto;
+        transform: none;
+        border-radius: 26px;
+        padding: 14px 22px 22px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        animation: bollaIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes bollaIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+    .area-info.aperta h2 { font-size: 1.35rem; margin: 2px 0 12px; }
+    /* velo scuro dietro la bolla: la scena resta intravista, niente sfocatura */
+    #enciclopedia::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 290;
+    }
+    #enciclopedia:has(.area-info.aperta)::before { opacity: 1; }
 
     .scheda-handle {
         display: block;
@@ -662,8 +696,11 @@ canvas{
 
     /* peek: la descrizione del pianeta è nascosta finché non si alza la scheda */
     #scheda-descrizione { display: none; }
-    /* alzata: descrizione centrata verticalmente nello spazio, così sta tutta senza scroll */
-    .area-info.aperta #scheda-descrizione { display: block; margin: auto 0; }
+    /* alzata: descrizione a tutta bolla; il font si adatta da JS così entra senza scroll.
+       Resta invisibile finché il font non è calcolato, poi compare in dissolvenza:
+       così non si vede lo "scatto" del testo che si ridimensiona all'apertura. */
+    .area-info.aperta #scheda-descrizione { display: block; margin: 0; line-height: 1.48; opacity: 0; transition: opacity 0.25s ease; }
+    .area-info.aperta #scheda-descrizione.pronta { opacity: 1; }
     /* alzata: spariscono misuratore e note lune, resta la descrizione */
     .area-info.aperta .misuratore-mobile,
     .area-info.aperta .lune-mobile { display: none; }

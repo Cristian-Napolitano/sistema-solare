@@ -432,6 +432,17 @@ function setup(){
         SCALA = 1;   // laptop / desktop: esperienza piena, identica tra loro
     }
 
+    // Verticale: su schermi troppo corti l'orbita esterna (Nettuno) toccherebbe il fondo e si
+    // accavallerebbe con la freccia "the more you know". Comprimo SOLO in verticale l'ampiezza
+    // delle orbite quel tanto che basta a lasciare un margine sotto; lo spill laterale
+    // (raggioX * SCALA) resta intatto. Su schermi già capienti (iPhone 14, tablet) non scatta.
+    if (VERTICALE) {
+        const MARGINE_FONDO_VERTICALE = 96;   // px liberi sotto l'orbita esterna (freccia + respiro)
+        const reachSotto = RAGGIO_MAX * VALLUNGA_Y * SCALA;
+        const spazioSotto = section.clientHeight * (1 - VSOLE_Y) - MARGINE_FONDO_VERTICALE;
+        if (reachSotto > spazioSotto) VALLUNGA_Y *= spazioSotto / reachSotto;
+    }
+
     if (VERTICALE) {
         soleCentroX = window.innerWidth * VSOLE_X;
         soleCentroY = section.clientHeight * VSOLE_Y;
@@ -737,13 +748,32 @@ const schedaHandle = document.querySelector('.scheda-handle');
 
 // aprire la scheda blocca lo scroll della pagina: così lo swipe giù la chiude soltanto
 // e non fa scivolare per sbaglio nella sezione sopra (Hero)
+// Bolla: riduce il font della descrizione finché entra tutta (niente scroll). Misura DOPO
+// che l'apertura ha finito di animare, così la clientHeight è quella finale della bolla.
+function adattaFontDescrizione() {
+    if (!areaInfo.classList.contains('aperta')) return;
+    const p = descrizione;
+    let fs = 1.5;
+    p.style.fontSize = fs + 'rem';
+    let g = 0;
+    while (areaInfo.scrollHeight > areaInfo.clientHeight && fs > 0.82 && g < 80) {
+        fs -= 0.02;
+        p.style.fontSize = fs + 'rem';
+        g++;
+    }
+    p.classList.add('pronta');   // font pronto -> ora la mostro in dissolvenza
+}
 function apriSlide() {
     areaInfo.classList.add('aperta');
     document.body.style.overflow = 'hidden';
+    // La bolla (position:fixed inset) ha già le sue dimensioni finali subito: calcolo il font
+    // al frame dopo (layout applicato) e lo mostro. Niente attese -> nessun ritardo.
+    requestAnimationFrame(() => requestAnimationFrame(adattaFontDescrizione));
 }
 function chiudiSlide() {
     areaInfo.classList.remove('aperta');
     document.body.style.overflow = '';
+    descrizione.classList.remove('pronta');   // torna invisibile: alla prossima apertura niente scatto
 }
 
 schedaHandle.addEventListener('click', () => {
@@ -779,6 +809,6 @@ areaModello.addEventListener('touchend', (e) => {
 });
 
 requestAnimationFrame(() => mostraPianeta(0));
-window.addEventListener('resize', () => mostraPianeta(pianetaCorrente));
+window.addEventListener('resize', () => { mostraPianeta(pianetaCorrente); adattaFontDescrizione(); });
 
 })
